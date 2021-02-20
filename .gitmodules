@@ -1,0 +1,6 @@
+[submodule "mech"]
+	path = mech
+	url = https://github.com/is-sobrero/sorobotics_codenamedog_mechanics.git
+[submodule "ik"]
+	path = ik
+	url = https://github.com/is-sobrero/sorobotics_codenamedog_ik.git
