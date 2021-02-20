@@ -24,35 +24,25 @@ p.stepSimulation()
 cubePos, cubeOrn = p.getBasePositionAndOrientation(botID)
 
 joints_index = {}
+fixed_index = {}    
+
 for joint in range(p.getNumJoints(botID)):
     joint_info = p.getJointInfo(botID, joint)
-    # we only want moving joints indexes, not the fixed ones
-    if joint_info[2] == p.JOINT_REVOLUTE:
+    if joint_info[2] is p.JOINT_FIXED:
+        fixed_index[joint_info[1].decode("utf-8")] = joint
+    if joint_info[2] is p.JOINT_REVOLUTE:
         joints_index[joint_info[1].decode("utf-8")] = joint
 
-print(joints_index)
+# add friction to robot feet
+p.changeDynamics(botID, fixed_index['rear_left_toe'], lateralFriction=1)
+p.changeDynamics(botID, fixed_index['rear_right_toe'], lateralFriction=1)
+p.changeDynamics(botID, fixed_index['front_left_toe'], lateralFriction=1)
+p.changeDynamics(botID, fixed_index['front_right_toe'], lateralFriction=1)
 
 def move_leg(leg_name, alpha, beta, gamma, spd):
     p.setJointMotorControl2(botID, joints_index[leg_name + '_shoulder'], p.POSITION_CONTROL, targetPosition=gamma-math.pi/2, force=1000, maxVelocity=spd)
     p.setJointMotorControl2(botID, joints_index[leg_name + '_leg'], p.POSITION_CONTROL, targetPosition=beta-math.pi/2, force=1000, maxVelocity=spd)
     p.setJointMotorControl2(botID, joints_index[leg_name + '_foot'], p.POSITION_CONTROL, targetPosition=alpha-math.pi, force=1000, maxVelocity=spd)
-
-
-
-"""
-jointFrictionForce = 1
-
-for joint in range(p.getNumJoints(botID)):
-    p.setJointMotorControl2(botID, joint, p.POSITION_CONTROL, force=jointFrictionForce)
-"""
-
-# add friction to robot feet
-'''
-p.changeDynamics(botID, joints_index['front_left_foot'], lateralFriction=2)
-p.changeDynamics(botID, joints_index['front_right_foot'], lateralFriction=2)
-p.changeDynamics(botID, joints_index['rear_left_foot'], lateralFriction=2)
-p.changeDynamics(botID, joints_index['rear_right_foot'], lateralFriction=2)
-'''
 
 # set base position
 
@@ -62,7 +52,7 @@ leg_r = Leg(right_axis=True)
 alpha_l, beta_l, gamma_l = ik.solve(leg_l, 0, 5.5, 15)
 alpha_r, beta_r, gamma_r = ik.solve(leg_l, 0, 5.5, 15)
 
-spd=1
+spd=5
 
 move_leg('front_left', alpha_l, beta_l, gamma_l, spd)
 move_leg('rear_left', alpha_l, beta_l, gamma_l, spd)
