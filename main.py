@@ -1,10 +1,17 @@
+# Copyright 2021 I.S. "A. Sobrero" - SoRobotics Team. All rights reserved.
+# Use of this source code is governed by the GPL 3.0 license that can be
+# found in the LICENSE file.
+
 import pybullet as p
+import numpy as np
 import pybullet_data
 import time
 import pathlib
 import math
 from ik.ik import IKSolver
 from ik.leg import Leg
+#from choreograph.choreograph import Choreograph
+#from choreograph.robot_pose import RobotPose
 
 GRAVITY = -9.81 # non facciamo gli ingegneri va
 dt = 1e-3
@@ -44,11 +51,12 @@ def move_leg(leg_name, alpha, beta, gamma, spd):
     p.setJointMotorControl2(botID, joints_index[leg_name + '_leg'], p.POSITION_CONTROL, targetPosition=beta-math.pi/2, force=1000, maxVelocity=spd)
     p.setJointMotorControl2(botID, joints_index[leg_name + '_foot'], p.POSITION_CONTROL, targetPosition=alpha-math.pi, force=1000, maxVelocity=spd)
 
-# set base position
 
 ik = IKSolver(simulated_environment=True)
 leg_l = Leg()
 leg_r = Leg(right_axis=True)
+
+# set home position
 alpha_l, beta_l, gamma_l = ik.solve(leg_l, 0, 5.5, 15)
 alpha_r, beta_r, gamma_r = ik.solve(leg_l, 0, 5.5, 15)
 
@@ -60,8 +68,23 @@ move_leg('front_right', alpha_r, beta_r, gamma_r, spd)
 move_leg('rear_right', alpha_r, beta_r, gamma_r, spd)
 
 p.setRealTimeSimulation(1)
+i=0
+
+#chor = Choreograph()
+
+interval = 0.03  
+start_time = time.time()
+last_time = start_time
+t = []
+
 while(1):
+    if (time.time() - last_time >= interval):
+        last_time = time.time()
+        t = time.time() - start_time
+    i = i+1
+
+    #robot_pose = chor.loop(1, 0, 0, 0.4, offset, )
     #p.setGravity(0,0,GRAVITY)
-    time.sleep(1/240.)
+    #time.sleep(1/240.)
 
 p.disconnect()
