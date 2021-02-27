@@ -52,6 +52,7 @@ def move_leg(leg_name, alpha, beta, gamma, spd):
     p.setJointMotorControl2(botID, joints_index[leg_name + '_foot'], p.POSITION_CONTROL, targetPosition=alpha-math.pi, force=1000, maxVelocity=spd)
 
 
+
 ik = IKSolver(simulated_environment=True)
 leg_l = Leg()
 leg_r = Leg(right_axis=True)
@@ -82,6 +83,8 @@ while(1):
         last_time = time.time()
         t = time.time() - start_time
     i = i+1
+    p.stepSimulation()
+    time.sleep(1/240.)
 
     #robot_pose = chor.loop(1, 0, 0, 0.4, offset, )
     #p.setGravity(0,0,GRAVITY)
