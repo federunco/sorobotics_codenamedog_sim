@@ -4,3 +4,6 @@
 [submodule "ik"]
 	path = ik
 	url = https://github.com/is-sobrero/sorobotics_codenamedog_ik.git
+[submodule "gaitplanner"]
+	path = gaitplanner
+	url = https://github.com/is-sobrero/sorobotics_retrieverbot_gaitplanner.git
